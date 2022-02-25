@@ -1,0 +1,4 @@
+/Users/amiratamakloe/Desktop/ProjetTest/build/CMakeFiles/ProjetTest.dir
+/Users/amiratamakloe/Desktop/ProjetTest/build/CMakeFiles/ProjetTest_couverture.dir
+/Users/amiratamakloe/Desktop/ProjetTest/build/CMakeFiles/edit_cache.dir
+/Users/amiratamakloe/Desktop/ProjetTest/build/CMakeFiles/rebuild_cache.dir

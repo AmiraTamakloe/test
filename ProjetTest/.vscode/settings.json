@@ -1,0 +1,13 @@
+{
+    "cmake.debugConfig": {
+        "args": [
+        ]
+    },
+    "gcovViewer.highlightMissedLines": true,
+    "files.associations": {
+        "iostream": "cpp",
+        "iomanip": "cpp",
+        "memory": "cpp"
+    },
+    // "C_Cpp.loggingLevel": "Debug"
+}
