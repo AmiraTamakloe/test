@@ -98,10 +98,10 @@ void ListeFilms::enleverFilm(const Film* film)
 //span<Acteur*> spanListeActeurs(const ListeActeurs& liste) { return span(liste.elements, liste.nElements); }
 
 //NOTE: Doit retourner un Acteur modifiable, sinon on ne peut pas l'utiliser pour modifier l'acteur tel que demandé dans le main, et on ne veut pas faire écrire deux versions.
-Acteur* ListeFilms::trouverActeur(const string& nomActeur) const
+shared_ptr<Acteur> ListeFilms::trouverActeur(const string& nomActeur) const
 {
 	for (const Film* film : enSpan()) {
-		for (Acteur* acteur : film->acteurs.spanListeActeurs()) {
+		for (shared_ptr<Acteur> acteur : film->acteurs.spanListeActeurs()) {
 			if (acteur->nom == nomActeur)
 				return acteur;
 		}
@@ -111,7 +111,7 @@ Acteur* ListeFilms::trouverActeur(const string& nomActeur) const
 //]
 
 //TODO: Compléter les fonctions pour lire le fichier et créer/allouer une ListeFilms.  La ListeFilms devra être passée entre les fonctions, pour vérifier l'existence d'un Acteur avant de l'allouer à nouveau (cherché par nom en utilisant la fonction ci-dessus).
-Acteur* lireActeur(istream& fichier//[
+shared_ptr<Acteur> lireActeur(istream& fichier//[
 , ListeFilms& listeFilms//]
 )
 {
@@ -120,12 +120,14 @@ Acteur* lireActeur(istream& fichier//[
 	acteur.anneeNaissance = lireUint16 (fichier);
 	acteur.sexe           = lireUint8  (fichier);
 	//[
-	Acteur* acteurExistant = listeFilms.trouverActeur(acteur.nom);
+	shared_ptr<Acteur> acteurExistant = listeFilms.trouverActeur(acteur.nom);
 	if (acteurExistant != nullptr)
 		return acteurExistant;
 	else {
 		cout << "Création Acteur " << acteur.nom << endl;
-		return new Acteur(acteur);
+		Acteur* acteurp = new Acteur(acteur);
+		shared_ptr<Acteur> sptr_acteurp(acteurp);
+		return sptr_acteurp;
 	}
 	//]
 	return {}; //TODO: Retourner un pointeur soit vers un acteur existant ou un nouvel acteur ayant les bonnes informations, selon si l'acteur existait déjà.  Pour fins de débogage, affichez les noms des acteurs crées; vous ne devriez pas voir le même nom d'acteur affiché deux fois pour la création.
@@ -155,7 +157,7 @@ Film* lireFilm(istream& fichier//[
 	for (int i = 0; i < film.acteurs.nElements; i++) {
 		//[
 	*/
-	for (Acteur*& acteur : filmp->acteurs.spanListeActeurs()) {
+	for (shared_ptr<Acteur>& acteur : filmp->acteurs.spanListeActeurs()) {
 		acteur = 
 		//]
 		lireActeur(fichier//[
@@ -209,24 +211,24 @@ ListeFilms::ListeFilms(const string& nomFichier) : possedeLesFilms_(true)
 
 //TODO: Une fonction pour détruire un film (relâcher toute la mémoire associée à ce film, et les acteurs qui ne jouent plus dans aucun films de la collection).  Noter qu'il faut enleve le film détruit des films dans lesquels jouent les acteurs.  Pour fins de débogage, affichez les noms des acteurs lors de leur destruction.
 //[
-void detruireActeur(Acteur* acteur)
-{
-	cout << "Destruction Acteur " << acteur->nom << endl;
-	delete acteur;
-}
-bool joueEncore(const Acteur* acteur)
+// void detruireActeur(shared_ptr<Acteur> acteur)
+// {
+// 	cout << "Destruction Acteur " << acteur->nom << endl;
+// 	delete acteur;
+// }
+bool joueEncore(const shared_ptr<Acteur> acteur)
 {
 	return acteur->joueDans.size() != 0;
 }
 void detruireFilm(Film* film)
 {
-	for (Acteur* acteur : film->acteurs.spanListeActeurs()) {
-		acteur->joueDans.enleverFilm(film);
-		if (!joueEncore(acteur))
-			detruireActeur(acteur);
-	}
-	cout << "Destruction Film " << film->titre << endl;
-	delete[] film->acteurs.getElements();
+	// for (shared_ptr<Acteur> acteur : film->acteurs.spanListeActeurs()) {
+	// 	acteur->joueDans.enleverFilm(film);
+	// 	if (!joueEncore(acteur))
+	// 		detruireActeur(acteur);
+	// }
+	// cout << "Destruction Film " << film->titre << endl;
+	// delete[] film->acteurs.getElements();
 	delete film;
 }
 //]
@@ -257,7 +259,7 @@ void afficherFilm(const Film& film)
 	cout << "  Recette: " << film.recette << "M$" << endl;
 
 	cout << "Acteurs:" << endl;
-	for (const Acteur* acteur : film.acteurs.spanListeActeurs())
+	for (const shared_ptr<Acteur>& acteur : film.acteurs.spanListeActeurs())
 		afficherActeur(*acteur);
 }
 //]
@@ -291,7 +293,7 @@ void afficherListeFilms(const ListeFilms& listeFilms)
 void afficherFilmographieActeur(const ListeFilms& listeFilms, const string& nomActeur)
 {
 	//TODO: Utiliser votre fonction pour trouver l'acteur (au lieu de le mettre à nullptr).
-	const Acteur* acteur = //[
+	const shared_ptr<Acteur> acteur = //[
 		listeFilms.trouverActeur(nomActeur);
 		/* //]
 		nullptr;

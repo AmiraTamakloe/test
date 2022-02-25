@@ -18,7 +18,7 @@ public:
 	~ListeFilms();
 	void ajouterFilm(Film* film);
 	void enleverFilm(const Film* film);
-	Acteur* trouverActeur(const std::string& nomActeur) const;
+	shared_ptr<Acteur> trouverActeur(const std::string& nomActeur) const;
 	span<Film*> enSpan() const;
 	int size() const { return nElements; }
 
@@ -40,7 +40,7 @@ public:
 	ListeActeurs(int capacite, int nElements)
 		: capacite_(capacite), nElements_(nElements)
 	{
-		elements_ = make_unique<Acteur * []>(capacite) ;
+		elements_ = make_unique<shared_ptr<Acteur>[]>(capacite) ;
 	}
 
 	ListeActeurs(const ListeActeurs& liste1) { capacite_ = liste1.capacite_; nElements_ = liste1.nElements_; }
@@ -48,18 +48,18 @@ public:
 	int getCapacite() { return capacite_; }
 	int getNElements() { return nElements_; }
 	
-	Acteur** getElements() { 
+	shared_ptr<Acteur>*  getElements() { 
 		return elements_.get();
 	};
-	span<Acteur*> spanListeActeurs() const { return span(elements_.get(), nElements_); }
-	void ajouterActeurListe(Acteur* nom) { elements_[nElements_] = nom; }
+	span<shared_ptr<Acteur>> spanListeActeurs() const { return span(elements_.get(), nElements_); }
+	void ajouterActeurListe(shared_ptr<Acteur> nom) { elements_[nElements_] = nom; }
 	 // Pointeur vers un tableau de Acteur*, chaque Acteur* pointant vers un Acteur.
 	void setNElements(int nElements) {
 		this->nElements_ = nElements;
 	}
-	void enleverActeur(const Acteur* acteur)
+	void enleverActeur(const shared_ptr<Acteur> acteur)
 	{	
-		for (Acteur*& element : spanListeActeurs()) {  // Doit être une référence au pointeur pour pouvoir le modifier.
+		for (shared_ptr<Acteur>& element : spanListeActeurs()) {  // Doit être une référence au pointeur pour pouvoir le modifier.
 			if (element == acteur) {
 				if (getNElements() > 1)
 					element = elements_[nElements_ - 1];
@@ -68,10 +68,11 @@ public:
 			}
 	}
 }
+
 private:
 	int capacite_ = 0;
 	int nElements_ = 0;
-	unique_ptr<Acteur* []> elements_ = make_unique<Acteur* []>(1);
+	unique_ptr<shared_ptr<Acteur>[]> elements_ = make_unique<shared_ptr<Acteur>[]>(1);
 };
 
 
