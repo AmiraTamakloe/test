@@ -5,6 +5,7 @@
 #include <cassert>
 #include "gsl/span"
 #include <memory>
+#include <functional>
 using gsl::span;
 using namespace std;
 
@@ -21,7 +22,13 @@ public:
 	shared_ptr<Acteur> trouverActeur(const std::string& nomActeur) const;
 	span<Film*> enSpan() const;
 	int size() const { return nElements; };
-	
+	Film* trouverFilm(const function<bool(const Film*)>critere) {
+		for(Film* film: enSpan()) {
+			if(critere(film))
+			return film;
+		}
+		return nullptr;
+	};
 
 private:
 	void changeDimension(int nouvelleCapacite);
@@ -35,6 +42,7 @@ private:
 // 	int capacite, nElements;
 // 	unique_ptr<Acteur*>elements; // Pointeur vers un tableau de Acteur*, chaque Acteur* pointant vers un Acteur.
 // };
+
 class ListeActeurs {
 public:	
 	ListeActeurs() {};
@@ -55,10 +63,10 @@ public:
 	};
 
 	ListeActeurs& operator= (ListeActeurs&& copie) noexcept = default;
-	int getCapacite() { return capacite_; }
-	int getNElements() { return nElements_; }
+	int getCapacite() const { return capacite_; }
+	int getNElements() const { return nElements_; }
 	
-	shared_ptr<Acteur>*  getElements() { 
+	const shared_ptr<Acteur>*  getElements() { 
 		return elements_.get();
 	};
 	span<shared_ptr<Acteur>> spanListeActeurs() const

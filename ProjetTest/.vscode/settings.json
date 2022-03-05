@@ -8,7 +8,8 @@
         "iostream": "cpp",
         "iomanip": "cpp",
         "memory": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "ostream": "cpp"
     },
     // "C_Cpp.loggingLevel": "Debug"
 }

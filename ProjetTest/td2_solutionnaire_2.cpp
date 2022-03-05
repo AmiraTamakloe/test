@@ -11,6 +11,7 @@
 #include <fstream>
 #include <string>
 #include <limits>
+#include <functional>
 #include <algorithm>
 #include "cppitertools/range.hpp"
 #include "gsl/span"
@@ -277,21 +278,27 @@ ListeFilms::~ListeFilms()
 }
 //]
 
-void afficherActeur(const Acteur& acteur)
-{
-	cout << "  " << acteur.nom << ", " << acteur.anneeNaissance << " " << acteur.sexe << endl;
-}
+// void afficherActeur(const Acteur& acteur)
+// {
+// 	cout << "  " << acteur.nom << ", " << acteur.anneeNaissance << " " << acteur.sexe << endl;
+// }
 
 //TODO: Une fonction pour afficher un film avec tous ces acteurs (en utilisant la fonction afficherActeur ci-dessus).
 //[
 
-ostream& operator<< (ostream& out, const Film& film) 
+ostream& operator<< (ostream& o, const Film& film) 
 {
-	out << "Titre: " << film.titre << "\n" << "  Réalisateur: " << film.realisateur << "\n" << "  Recette: " << film.recette << "M$ " << "\n" << "Acteurs:" << endl;
+	o << "Titre: " << film.titre << "\n";
+	o << "Réalisateur: " << film.realisateur << "\n";
+	o << "Année :" << film.anneeSortie <<"\n";
+	o << "Recette: " << film.recette << "M$ " <<"\n";
+	o << "Acteurs:" << "\n";
+	
 	for (const auto& acteur : film.acteurs.spanListeActeurs())
-		out << "  " << acteur->nom << ", " << acteur->anneeNaissance << " " << acteur->sexe << endl;
+		o << "  " << acteur->nom << ", " << acteur->anneeNaissance << " " << acteur->sexe << "\n";
+		o << endl;
 		//afficherActeur(acteur);
-	return out;
+	return o;
 } 
 
 void afficherFilm(const Film& film)
@@ -334,20 +341,20 @@ void afficherListeFilms(const ListeFilms& listeFilms)
 	}
 }
 
-void afficherFilmographieActeur(const ListeFilms& listeFilms, const string& nomActeur)
-{
-	//TODO: Utiliser votre fonction pour trouver l'acteur (au lieu de le mettre à nullptr).
-	const shared_ptr<Acteur> acteur = //[
-		listeFilms.trouverActeur(nomActeur);
-		/* //]
-		nullptr;
-	//[ */
-	//]
-	if (acteur == nullptr)
-		cout << "Aucun acteur de ce nom" << endl;
-	else
-		afficherListeFilms(acteur->joueDans);
-}
+// void afficherFilmographieActeur(const ListeFilms& listeFilms, const string& nomActeur)
+// {
+// 	//TODO: Utiliser votre fonction pour trouver l'acteur (au lieu de le mettre à nullptr).
+// 	const shared_ptr<Acteur> acteur = //[
+// 		listeFilms.trouverActeur(nomActeur);
+// 		/* //]
+// 		nullptr;
+// 	//[ */
+// 	//]
+// 	if (acteur == nullptr)
+// 		cout << "Aucun acteur de ce nom" << endl;
+// 	else
+// 		afficherListeFilms(acteur->joueDans);
+// }
 
 int main()
 {
@@ -363,14 +370,17 @@ int main()
 	//TODO: Chaque TODO dans cette fonction devrait se faire en 1 ou 2 lignes, en appelant les fonctions écrites.
 
 	//TODO: La ligne suivante devrait lire le fichier binaire en allouant la mémoire nécessaire.  Devrait afficher les noms de 20 acteurs sans doublons (par l'affichage pour fins de débogage dans votre fonction lireActeur).
-	cout << "Amira a dead"<< endl;
 	ListeFilms listeFilms("films.bin");
-	cout << "Le CRASH EST ICI"<< endl;
 
 	cout << ligneDeSeparation << "Le premier film de la liste est:" << endl;
 	//TODO: Afficher le premier film de la liste.  Devrait être Alien.
 	//[
-	afficherFilm(*listeFilms.enSpan()[0]);
+	cout << *listeFilms.enSpan()[0];
+
+	cout << ligneDeSeparation << "Le résultat de la surcharge de l'opérateur << est:" << endl;
+	Film& unFilm =  *listeFilms.enSpan()[0];
+	Film& unAutreFilm = *listeFilms.enSpan()[1];
+	cout << unFilm <<  unAutreFilm;
 	//]
 
 	cout << ligneDeSeparation << "Les films sont:" << endl;
@@ -386,9 +396,31 @@ int main()
 	//]
 
 	cout << ligneDeSeparation << "Liste des films où Benedict Cumberbatch joue sont:" << endl;
+
+	cout << ligneDeSeparation;
+	cout << "CHAPITRE 7-8 : " << endl;
+	//partie 1 :
+	Film& skylien = *listeFilms.enSpan()[0];
+	//partie 2 
+	skylien.titre = "Skylien";
+	//partie 3 
+	skylien.acteurs.spanListeActeurs()[0] = listeFilms.enSpan()[1]->acteurs.getElements()[0];
+	//partie 4 
+	skylien.acteurs.spanListeActeurs()[0]->nom = "Daniel Wroughton Craig";
+	//partie 5
+	cout << skylien;
+	cout << *listeFilms.enSpan()[0];
+	cout << *listeFilms.enSpan()[1];
+	cout << ligneDeSeparation;
+
+	cout << "Chapitre 10 " << endl;
+	cout << "Film avec une recette de 955M$: ";
+	Film* resultat = listeFilms.trouverFilm([](const Film* film){return film->recette == 955;});
+	afficherFilm(*resultat);
+	cout << ligneDeSeparation;
 	//TODO: Afficher la liste des films où Benedict Cumberbatch joue.  Il devrait y avoir Le Hobbit et Le jeu de l'imitation.
 	//[
-	afficherFilmographieActeur(listeFilms, "Benedict Cumberbatch");
+	// afficherFilmographieActeur(listeFilms, "Benedict Cumberbatch");
 	//]
 	
 	//TODO: Détruire et enlever le premier film de la liste (Alien).  Ceci devrait "automatiquement" (par ce que font vos fonctions) détruire les acteurs Tom Skerritt et John Hurt, mais pas Sigourney Weaver puisqu'elle joue aussi dans Avatar.
