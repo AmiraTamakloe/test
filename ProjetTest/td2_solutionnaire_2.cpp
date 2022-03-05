@@ -101,7 +101,7 @@ void ListeFilms::enleverFilm(const Film* film)
 shared_ptr<Acteur> ListeFilms::trouverActeur(const string& nomActeur) const
 {
 	for (const Film* film : enSpan()) {
-		for (shared_ptr<Acteur> acteur : film->acteurs.spanListeActeurs()) {
+		for (auto& acteur :film->acteurs.spanListeActeurs()) {
 			if (acteur->nom == nomActeur)
 				return acteur;
 		}
@@ -149,6 +149,7 @@ Film* lireFilm(istream& fichier//[
 	//[
 	// Film* filmp = new Film(film); //NOTE: On aurait normalement fait le "new" au début de la fonction pour directement mettre les informations au bon endroit; on le fait ici pour que le code ci-dessus puisse être directement donné aux étudiants sans qu'ils aient le "new" déjà écrit.
 	cout << "Création Film " << film->titre << endl;
+	film->acteurs = ListeActeurs(film->acteurs.getCapacite(), film->acteurs.getNElements());
 	// filmp->acteurs = ListeActeurs(film->acteurs.getCapacite(), film->acteurs.getNElements());
 	//filmp->acteurs.elements = new Acteur*[filmp->acteurs.nElements];
 	/*
@@ -156,10 +157,17 @@ Film* lireFilm(istream& fichier//[
 	for (int i = 0; i < film.acteurs.nElements; i++) {
 		//[
 	*/
-	for ([[maybe_unused]] int i : range(nActeurs)) { //NOTE: On ne peut pas faire un span simple avec spanListeFilms car la liste est vide et on ajoute des éléments à mesure.
-		film->acteurs.ajouterActeurListe(lireActeur(fichier, listeFilms));
-
+	for (auto& acteur : film->acteurs.spanListeActeurs()) 
+	{
+		acteur = lireActeur(fichier, listeFilms);
+		//TODO: Placer l'acteur au bon endroit dans les acteurs du film.
+		//TODO: Ajouter le film à la liste des films dans lesquels l'acteur joue.
+		//acteur->joueDans.ajouterFilm(filmp);
 	}
+	// for ([[maybe_unused]] int i : range(nActeurs)) { //NOTE: On ne peut pas faire un span simple avec spanListeFilms car la liste est vide et on ajoute des éléments à mesure.
+	// 	film->acteurs.ajouterActeurListe(lireActeur(fichier, listeFilms));
+
+	// }
 
 	// }for (shared_ptr<Acteur>& acteur : filmp->acteurs.spanListeActeurs()) {
 	// 	acteur = 
@@ -212,20 +220,26 @@ ListeFilms::ListeFilms(const string& nomFichier) : possedeLesFilms_(true)
 	*/
 	//]
 }
-ListeFilms ListeFilms::creerListe(string nomFichier) 
-{
-	ifstream fichier(nomFichier, ios::binary);
-	fichier.exceptions(ios::failbit);
+
+
+
+// ListeFilms ListeFilms::creerListe(string nomFichier) 
+// {
+// 	ifstream fichier(nomFichier, ios::binary);
+// 	fichier.exceptions(ios::failbit);
 	
-	int nElements = lireUint16(fichier);
+// 	int nElements = lireUint16(fichier);
 
-	ListeFilms listeFilms;
-	for ([[maybe_unused]] int i : range(nElements)) { //NOTE: On ne peut pas faire un span simple avec spanListeFilms car la liste est vide et on ajoute des éléments à mesure.
-		ajouterFilm(lireFilm(fichier, listeFilms)); 
-	}
-	return listeFilms;
+// 	ListeFilms listeFilms;
+// 	for ([[maybe_unused]] int i : range(nElements)) { //NOTE: On ne peut pas faire un span simple avec spanListeFilms car la liste est vide et on ajoute des éléments à mesure.
+// 		ajouterFilm(lireFilm(fichier, listeFilms)); 
+// 	}
+// 	return listeFilms;
 
-}
+// }
+
+
+
 //TODO: Une fonction pour détruire un film (relâcher toute la mémoire associée à ce film, et les acteurs qui ne jouent plus dans aucun films de la collection).  Noter qu'il faut enleve le film détruit des films dans lesquels jouent les acteurs.  Pour fins de débogage, affichez les noms des acteurs lors de leur destruction.
 //[
 // void detruireActeur(shared_ptr<Acteur> acteur)
@@ -233,10 +247,11 @@ ListeFilms ListeFilms::creerListe(string nomFichier)
 // 	cout << "Destruction Acteur " << acteur->nom << endl;
 // 	delete acteur;
 // }
-bool joueEncore(const shared_ptr<Acteur> acteur)
-{
-	return acteur->joueDans.size() != 0;
-}
+// bool joueEncore(const shared_ptr<Acteur> acteur)
+// {
+// 	return acteur->joueDans.size() != 0;
+// }
+
 void detruireFilm(Film* film)
 {
 	// for (shared_ptr<Acteur> acteur : film->acteurs.spanListeActeurs()) {
@@ -244,7 +259,7 @@ void detruireFilm(Film* film)
 	// 	if (!joueEncore(acteur))
 	// 		detruireActeur(acteur);
 	// }
-	// cout << "Destruction Film " << film->titre << endl;
+	cout << "Destruction Film " << film->titre << endl;
 	// delete[] film->acteurs.getElements();
 	delete film;
 }
@@ -269,15 +284,26 @@ void afficherActeur(const Acteur& acteur)
 
 //TODO: Une fonction pour afficher un film avec tous ces acteurs (en utilisant la fonction afficherActeur ci-dessus).
 //[
+
+ostream& operator<< (ostream& out, const Film& film) 
+{
+	out << "Titre: " << film.titre << "\n" << "  Réalisateur: " << film.realisateur << "\n" << "  Recette: " << film.recette << "M$ " << "\n" << "Acteurs:" << endl;
+	for (const auto& acteur : film.acteurs.spanListeActeurs())
+		out << "  " << acteur->nom << ", " << acteur->anneeNaissance << " " << acteur->sexe << endl;
+		//afficherActeur(acteur);
+	return out;
+} 
+
 void afficherFilm(const Film& film)
 {
-	cout << "Titre: " << film.titre << endl;
-	cout << "  Réalisateur: " << film.realisateur << "  Année :" << film.anneeSortie << endl;
-	cout << "  Recette: " << film.recette << "M$" << endl;
+	cout << film << endl;
+	// cout << "Titre: " << film.titre << endl;
+	// cout << "  Réalisateur: " << film.realisateur << "  Année :" << film.anneeSortie << endl;
+	// cout << "  Recette: " << film.recette << "M$" << endl;
 
-	cout << "Acteurs:" << endl;
-	for (const shared_ptr<Acteur>& acteur : film.acteurs.spanListeActeurs())
-		afficherActeur(*acteur);
+	// cout << "Acteurs:" << endl;
+	// for (const shared_ptr<Acteur>& acteur : film.acteurs.spanListeActeurs())
+	// 	afficherActeur(*acteur);
 }
 //]
 
@@ -301,7 +327,8 @@ void afficherListeFilms(const ListeFilms& listeFilms)
 		//]
 		//TODO: Afficher le film.
 		//[
-		afficherFilm(*film);
+		// afficherFilm(*film);
+		cout << *film<<endl;
 		//]
 		cout << ligneDeSeparation;
 	}
