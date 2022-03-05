@@ -20,7 +20,9 @@ public:
 	void enleverFilm(const Film* film);
 	shared_ptr<Acteur> trouverActeur(const std::string& nomActeur) const;
 	span<Film*> enSpan() const;
-	int size() const { return nElements; }
+	int size() const { return nElements; };
+	
+	ListeFilms creerListe(string nomFichier);
 
 private:
 	void changeDimension(int nouvelleCapacite);
@@ -41,10 +43,19 @@ public:
 		: capacite_(capacite), nElements_(nElements)
 	{
 		elements_ = make_unique<shared_ptr<Acteur>[]>(capacite) ;
-	}
+	};
+	ListeActeurs(int nActeurs)
+		: capacite_(nActeurs), nElements_(nActeurs)
+	{
+		elements_ = make_unique<shared_ptr<Acteur>[]>(nActeurs) ;
+	};
+	ListeActeurs(const ListeActeurs& liste1) { 
+		capacite_ = liste1.capacite_; 
+		nElements_ = liste1.nElements_; 
+		elements_ = make_unique<shared_ptr<Acteur>[]>(capacite_) ;
+		};
 
-	ListeActeurs(const ListeActeurs& liste1) { capacite_ = liste1.capacite_; nElements_ = liste1.nElements_; }
-
+	ListeActeurs& operator= (ListeActeurs&& copie) noexcept = default;
 	int getCapacite() { return capacite_; }
 	int getNElements() { return nElements_; }
 	
@@ -52,7 +63,7 @@ public:
 		return elements_.get();
 	};
 	span<shared_ptr<Acteur>> spanListeActeurs() const { return span(elements_.get(), nElements_); }
-	void ajouterActeurListe(shared_ptr<Acteur> nom) { elements_[nElements_] = nom; }
+	void ajouterActeurListe(shared_ptr<Acteur> nom) { elements_[nElements_++] = move(nom); }
 	 // Pointeur vers un tableau de Acteur*, chaque Acteur* pointant vers un Acteur.
 	void setNElements(int nElements) {
 		this->nElements_ = nElements;

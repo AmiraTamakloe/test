@@ -125,9 +125,7 @@ shared_ptr<Acteur> lireActeur(istream& fichier//[
 		return acteurExistant;
 	else {
 		cout << "Création Acteur " << acteur.nom << endl;
-		Acteur* acteurp = new Acteur(acteur);
-		shared_ptr<Acteur> sptr_acteurp(acteurp);
-		return sptr_acteurp;
+		return make_shared<Acteur>(move(acteur));
 	}
 	//]
 	return {}; //TODO: Retourner un pointeur soit vers un acteur existant ou un nouvel acteur ayant les bonnes informations, selon si l'acteur existait déjà.  Pour fins de débogage, affichez les noms des acteurs crées; vous ne devriez pas voir le même nom d'acteur affiché deux fois pour la création.
@@ -138,38 +136,44 @@ Film* lireFilm(istream& fichier//[
 )
 {
 	//Film* film = new Film();
-	Film film = {};
-	film.titre       = lireString(fichier);
-	film.realisateur = lireString(fichier);
-	film.anneeSortie = lireUint16 (fichier);
-	film.recette     = lireUint16 (fichier);
-	film.acteurs.setNElements(lireUint8 (fichier));
+	Film* film = new Film;
+	film->titre       = lireString(fichier);
+	film->realisateur = lireString(fichier);
+	film->anneeSortie = lireUint16 (fichier);
+	film->recette     = lireUint16 (fichier);
+	auto nActeurs = lireUint8 (fichier);
+	film->acteurs = ListeActeurs(nActeurs);
 
 	//film->acteurs.nElements = lireUint8 (fichier);  //NOTE: Vous avez le droit d'allouer d'un coup le tableau pour les acteurs, sans faire de réallocation comme pour ListeFilms.  Vous pouvez aussi copier-coller les fonctions d'allocation de ListeFilms ci-dessus dans des nouvelles fonctions et faire un remplacement de Film par Acteur, pour réutiliser cette réallocation.
 	
 	//[
-	Film* filmp = new Film(film); //NOTE: On aurait normalement fait le "new" au début de la fonction pour directement mettre les informations au bon endroit; on le fait ici pour que le code ci-dessus puisse être directement donné aux étudiants sans qu'ils aient le "new" déjà écrit.
-	cout << "Création Film " << film.titre << endl;
-	ListeActeurs(film.acteurs.getCapacite(), film.acteurs.getNElements());
+	// Film* filmp = new Film(film); //NOTE: On aurait normalement fait le "new" au début de la fonction pour directement mettre les informations au bon endroit; on le fait ici pour que le code ci-dessus puisse être directement donné aux étudiants sans qu'ils aient le "new" déjà écrit.
+	cout << "Création Film " << film->titre << endl;
+	// filmp->acteurs = ListeActeurs(film->acteurs.getCapacite(), film->acteurs.getNElements());
 	//filmp->acteurs.elements = new Acteur*[filmp->acteurs.nElements];
 	/*
 	//]
 	for (int i = 0; i < film.acteurs.nElements; i++) {
 		//[
 	*/
-	for (shared_ptr<Acteur>& acteur : filmp->acteurs.spanListeActeurs()) {
-		acteur = 
-		//]
-		lireActeur(fichier//[
-		, listeFilms//]
-		); //TODO: Placer l'acteur au bon endroit dans les acteurs du film.
-		//TODO: Ajouter le film à la liste des films dans lesquels l'acteur joue.
-	//[
-		acteur->joueDans.ajouterFilm(filmp);
-	//]
+	for ([[maybe_unused]] int i : range(nActeurs)) { //NOTE: On ne peut pas faire un span simple avec spanListeFilms car la liste est vide et on ajoute des éléments à mesure.
+		film->acteurs.ajouterActeurListe(lireActeur(fichier, listeFilms));
+
 	}
+
+	// }for (shared_ptr<Acteur>& acteur : filmp->acteurs.spanListeActeurs()) {
+	// 	acteur = 
+	// 	//]
+	// 	lireActeur(fichier//[
+	// 	, listeFilms//]
+	// 	); //TODO: Placer l'acteur au bon endroit dans les acteurs du film.
+	// 	//TODO: Ajouter le film à la liste des films dans lesquels l'acteur joue.
+	// //[
+	// 	acteur->joueDans.ajouterFilm(filmp);
+	// //]
+	// }
 	//[
-	return filmp;
+	return film;
 	//]
 	return {}; //TODO: Retourner le pointeur vers le nouveau film.
 }
@@ -199,7 +203,7 @@ ListeFilms::ListeFilms(const string& nomFichier) : possedeLesFilms_(true)
 		//]
 		; //TODO: Ajouter le film à la liste.
 	}
-	
+
 	//[
 	/*
 	//]
@@ -208,7 +212,20 @@ ListeFilms::ListeFilms(const string& nomFichier) : possedeLesFilms_(true)
 	*/
 	//]
 }
+ListeFilms ListeFilms::creerListe(string nomFichier) 
+{
+	ifstream fichier(nomFichier, ios::binary);
+	fichier.exceptions(ios::failbit);
+	
+	int nElements = lireUint16(fichier);
 
+	ListeFilms listeFilms;
+	for ([[maybe_unused]] int i : range(nElements)) { //NOTE: On ne peut pas faire un span simple avec spanListeFilms car la liste est vide et on ajoute des éléments à mesure.
+		ajouterFilm(lireFilm(fichier, listeFilms)); 
+	}
+	return listeFilms;
+
+}
 //TODO: Une fonction pour détruire un film (relâcher toute la mémoire associée à ce film, et les acteurs qui ne jouent plus dans aucun films de la collection).  Noter qu'il faut enleve le film détruit des films dans lesquels jouent les acteurs.  Pour fins de débogage, affichez les noms des acteurs lors de leur destruction.
 //[
 // void detruireActeur(shared_ptr<Acteur> acteur)
