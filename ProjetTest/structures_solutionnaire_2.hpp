@@ -42,36 +42,36 @@ private:
 // 	int capacite, nElements;
 // 	unique_ptr<Acteur*>elements; // Pointeur vers un tableau de Acteur*, chaque Acteur* pointant vers un Acteur.
 // };
-
-class ListeActeurs {
+template <typename T>
+class Liste {
 public:	
-	ListeActeurs() {};
-	ListeActeurs(int capacite, int nElements)
+	Liste() {};
+	Liste(int capacite, int nElements)
 		: capacite_(capacite), nElements_(nElements)
 	{
-		elements_ = make_unique<shared_ptr<Acteur>[]>(capacite) ;
+		elements_ = make_unique<shared_ptr<T>[]>(capacite) ;
 	};
-	ListeActeurs(int nActeurs)
+	Liste(int nActeurs)
 		: capacite_(nActeurs), nElements_(nActeurs)
 	{
-		elements_ = make_unique<shared_ptr<Acteur>[]>(nActeurs) ;
+		elements_ = make_unique<shared_ptr<T>[]>(nActeurs) ;
 	};
-	ListeActeurs(const ListeActeurs& liste1) { 
+	Liste<T>(const Liste<T>& liste1) { 
 		capacite_ = liste1.capacite_; 
 		nElements_ = liste1.nElements_; 
-		elements_ = make_unique<shared_ptr<Acteur>[]>(capacite_) ;
+		elements_ = make_unique<shared_ptr<T>[]>(capacite_) ;
 	};
 
-	ListeActeurs& operator= (ListeActeurs&& copie) noexcept = default;
+	Liste<T>& operator= (Liste<T>&& copie) noexcept = default;
 	int getCapacite() const { return capacite_; }
 	int getNElements() const { return nElements_; }
 	
-	const shared_ptr<Acteur>*  getElements() { 
+	const shared_ptr<T>*  getElements() { 
 		return elements_.get();
 	};
-	span<shared_ptr<Acteur>> spanListeActeurs() const
+	span<shared_ptr<T>> spanListe() const
 	{ return span(elements_.get(), nElements_); }
-	void ajouterActeurListe(shared_ptr<Acteur> nom) { elements_[nElements_++] = move(nom); }
+	void ajouterActeurListe(shared_ptr<T> nom) { elements_[nElements_++] = move(nom); }
 	 // Pointeur vers un tableau de Acteur*, chaque Acteur* pointant vers un Acteur.
 	void setNElements(int nElements) {
 		this->nElements_ = nElements;
@@ -94,15 +94,29 @@ public:
 private:
 	int capacite_ = 0;
 	int nElements_ = 0;
-	unique_ptr<shared_ptr<Acteur>[]> elements_ = make_unique<shared_ptr<Acteur>[]>(1);
+	unique_ptr<shared_ptr<T>[]> elements_ = make_unique<shared_ptr<T>[]>(1);
 };
 
+using ListeActeurs = Liste<Acteur>;
 
 struct Film
 {
 	std::string titre, realisateur; // Titre et nom du réalisateur (on suppose qu'il n'y a qu'un réalisateur).
 	int anneeSortie, recette; // Année de sortie et recette globale du film en millions de dollars
 	ListeActeurs acteurs;
+
+	Film& operator=(const Film& autre)
+	{
+		if (this != &autre)
+		{
+			titre = autre.titre;
+			realisateur = autre.titre;
+			anneeSortie = autre.anneeSortie;
+			recette = autre.recette;
+			acteurs = ListeActeurs(autre.acteurs);
+		}
+		return *this;
+	}
 };
 
 struct Acteur

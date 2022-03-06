@@ -102,7 +102,7 @@ void ListeFilms::enleverFilm(const Film* film)
 shared_ptr<Acteur> ListeFilms::trouverActeur(const string& nomActeur) const
 {
 	for (const Film* film : enSpan()) {
-		for (auto& acteur :film->acteurs.spanListeActeurs()) {
+		for (auto& acteur :film->acteurs.spanListe()) {
 			if (acteur->nom == nomActeur)
 				return acteur;
 		}
@@ -158,7 +158,7 @@ Film* lireFilm(istream& fichier//[
 	for (int i = 0; i < film.acteurs.nElements; i++) {
 		//[
 	*/
-	for (auto& acteur : film->acteurs.spanListeActeurs()) 
+	for (auto& acteur : film->acteurs.spanListe()) 
 	{
 		acteur = lireActeur(fichier, listeFilms);
 		//TODO: Placer l'acteur au bon endroit dans les acteurs du film.
@@ -294,7 +294,7 @@ ostream& operator<< (ostream& o, const Film& film)
 	o << "Recette: " << film.recette << "M$ " <<"\n";
 	o << "Acteurs:" << "\n";
 	
-	for (const auto& acteur : film.acteurs.spanListeActeurs())
+	for (const auto& acteur : film.acteurs.spanListe())
 		o << "  " << acteur->nom << ", " << acteur->anneeNaissance << " " << acteur->sexe << "\n";
 		o << endl;
 		//afficherActeur(acteur);
@@ -371,10 +371,13 @@ int main()
 
 	//TODO: La ligne suivante devrait lire le fichier binaire en allouant la mémoire nécessaire.  Devrait afficher les noms de 20 acteurs sans doublons (par l'affichage pour fins de débogage dans votre fonction lireActeur).
 	ListeFilms listeFilms("films.bin");
+	cout << "WJGFDGVBHNJSMNBHGVHBJN"<< endl; //fonctionne
 
 	cout << ligneDeSeparation << "Le premier film de la liste est:" << endl;
 	//TODO: Afficher le premier film de la liste.  Devrait être Alien.
 	//[
+	cout << "WJGFDGVBHNJSMNBHGVHBJN"<< endl; //fonctionne 
+	
 	cout << *listeFilms.enSpan()[0];
 
 	cout << ligneDeSeparation << "Le résultat de la surcharge de l'opérateur << est:" << endl;
@@ -389,7 +392,7 @@ int main()
 	//[
 	afficherListeFilms(listeFilms);
 	//]
-
+	cout << "WJGFDGVBHNJSMNBHGVHBJN"<< endl; //fonctionne
 	//TODO: Modifier l'année de naissance de Benedict Cumberbatch pour être 1976 (elle était 0 dans les données lues du fichier).  Vous ne pouvez pas supposer l'ordre des films et des acteurs dans les listes, il faut y aller par son nom.
 	//[
 	listeFilms.trouverActeur("Benedict Cumberbatch")->anneeNaissance = 1976;
@@ -404,9 +407,9 @@ int main()
 	//partie 2 
 	skylien.titre = "Skylien";
 	//partie 3 
-	skylien.acteurs.spanListeActeurs()[0] = listeFilms.enSpan()[1]->acteurs.getElements()[0];
+	skylien.acteurs.spanListe()[0] = listeFilms.enSpan()[1]->acteurs.getElements()[0];
 	//partie 4 
-	skylien.acteurs.spanListeActeurs()[0]->nom = "Daniel Wroughton Craig";
+	skylien.acteurs.spanListe()[0]->nom = "Daniel Wroughton Craig";
 	//partie 5
 	cout << skylien;
 	cout << *listeFilms.enSpan()[0];
