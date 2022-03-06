@@ -371,13 +371,10 @@ int main()
 
 	//TODO: La ligne suivante devrait lire le fichier binaire en allouant la mémoire nécessaire.  Devrait afficher les noms de 20 acteurs sans doublons (par l'affichage pour fins de débogage dans votre fonction lireActeur).
 	ListeFilms listeFilms("films.bin");
-	cout << "WJGFDGVBHNJSMNBHGVHBJN"<< endl; //fonctionne
 
 	cout << ligneDeSeparation << "Le premier film de la liste est:" << endl;
 	//TODO: Afficher le premier film de la liste.  Devrait être Alien.
 	//[
-	cout << "WJGFDGVBHNJSMNBHGVHBJN"<< endl; //fonctionne 
-	
 	cout << *listeFilms.enSpan()[0];
 
 	cout << ligneDeSeparation << "Le résultat de la surcharge de l'opérateur << est:" << endl;
@@ -392,7 +389,7 @@ int main()
 	//[
 	afficherListeFilms(listeFilms);
 	//]
-	cout << "WJGFDGVBHNJSMNBHGVHBJN"<< endl; //fonctionne
+	 //fonctionne
 	//TODO: Modifier l'année de naissance de Benedict Cumberbatch pour être 1976 (elle était 0 dans les données lues du fichier).  Vous ne pouvez pas supposer l'ordre des films et des acteurs dans les listes, il faut y aller par son nom.
 	//[
 	listeFilms.trouverActeur("Benedict Cumberbatch")->anneeNaissance = 1976;
@@ -407,7 +404,7 @@ int main()
 	//partie 2 
 	skylien.titre = "Skylien";
 	//partie 3 
-	skylien.acteurs.spanListe()[0] = listeFilms.enSpan()[1]->acteurs.getElements()[0];
+	skylien.acteurs.spanListe()[0] = listeFilms.enSpan()[1]->acteurs.spanListe()[0];
 	//partie 4 
 	skylien.acteurs.spanListe()[0]->nom = "Daniel Wroughton Craig";
 	//partie 5
@@ -428,6 +425,32 @@ int main()
 	
 	//TODO: Détruire et enlever le premier film de la liste (Alien).  Ceci devrait "automatiquement" (par ce que font vos fonctions) détruire les acteurs Tom Skerritt et John Hurt, mais pas Sigourney Weaver puisqu'elle joue aussi dans Avatar.
 	//[
+
+	cout << ligneDeSeparation << "Chapitre 9 : " << endl;
+
+	//partie 1 et 2
+	Liste<string> listeTexte;
+	listeTexte.ajouterElementListe(make_shared<string>("Programmation C++"));
+	listeTexte.ajouterElementListe(make_shared<string>("Programmation Python"));
+	Liste<string> listeTexte2 = listeTexte;
+	cout << *listeTexte.getElements()[0] << endl;
+	cout << *listeTexte.getElements()[1] << endl;
+	cout << *listeTexte2.getElements()[0] << endl;
+	cout << *listeTexte2.getElements()[1] << endl;
+
+	//partie 3
+	*listeTexte.spanListe()[0] = "Polytechnique Montreal";
+	*listeTexte.spanListe()[1] = "Assembleur is hard";
+	cout << *listeTexte.getElements()[0] << endl;
+	cout << *listeTexte.getElements()[1] << endl;
+	cout << *listeTexte2.getElements()[0] << endl;
+	cout << *listeTexte2.getElements()[1] << endl;
+
+	cout << ligneDeSeparation;
+	
+	
+	
+	
 	detruireFilm(listeFilms.enSpan()[0]);
 	listeFilms.enleverFilm(listeFilms.enSpan()[0]);
 	//]

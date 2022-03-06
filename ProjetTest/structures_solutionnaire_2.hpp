@@ -59,7 +59,9 @@ public:
 	Liste<T>(const Liste<T>& liste1) { 
 		capacite_ = liste1.capacite_; 
 		nElements_ = liste1.nElements_; 
-		elements_ = make_unique<shared_ptr<T>[]>(capacite_) ;
+		for (int i = 0; i < liste1.nElements_ ; i++) {
+			elements_[i]= liste1.elements_[i];
+			}
 	};
 
 	Liste<T>& operator= (Liste<T>&& copie) noexcept = default;
@@ -69,26 +71,16 @@ public:
 	const shared_ptr<T>*  getElements() { 
 		return elements_.get();
 	};
+
 	span<shared_ptr<T>> spanListe() const
 	{ return span(elements_.get(), nElements_); }
-	void ajouterActeurListe(shared_ptr<T> nom) { elements_[nElements_++] = move(nom); }
+	span<shared_ptr<T>> spanListe() 
+	{ return span(elements_.get(), nElements_); }
+	void ajouterElementListe(shared_ptr<T> nom) { elements_[nElements_++] = move(nom); }
 	 // Pointeur vers un tableau de Acteur*, chaque Acteur* pointant vers un Acteur.
 	void setNElements(int nElements) {
 		this->nElements_ = nElements;
 	};
-	// void enleverActeur(const shared_ptr<Acteur> acteur)
-	// {	
-	// 	for (shared_ptr<Acteur>& element : spanListeActeurs()) 
-	// 	{  // Doit être une référence au pointeur pour pouvoir le modifier.
-	// 		if (element == acteur) 
-	// 		{
-	// 			if (getNElements() > 1)
-	// 				element = elements_[nElements_ - 1];
-	// 			nElements_--;
-	// 			return;
-	// 		}
-	// 	}
-	
 
 
 private:
