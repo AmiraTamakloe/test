@@ -400,16 +400,19 @@ int main()
 	cout << ligneDeSeparation;
 	cout << "CHAPITRE 7-8 : " << endl;
 	//partie 1 :
-	Film& skylien = *listeFilms.enSpan()[0];
+	Film skylien= *listeFilms[0] ;
 	//partie 2 
 	skylien.titre = "Skylien";
 	//partie 3 
-	skylien.acteurs.spanListe()[0] = listeFilms.enSpan()[1]->acteurs.spanListe()[0];
+	skylien.acteurs[0] = listeFilms[1]->acteurs[0];
 	//partie 4 
-	skylien.acteurs.spanListe()[0]->nom = "Daniel Wroughton Craig";
+	skylien.acteurs[0]->nom = "Daniel Wroughton Craig";
 	//partie 5
+	cout << "Le film devrait être skylien" << endl;
 	cout << skylien;
+	cout << "Le film devrait être Alien" << endl;
 	cout << *listeFilms.enSpan()[0];
+	cout << "Le film devrait être skyfall" << endl;
 	cout << *listeFilms.enSpan()[1];
 	cout << ligneDeSeparation;
 
@@ -433,18 +436,22 @@ int main()
 	listeTexte.ajouterElementListe(make_shared<string>("Programmation C++"));
 	listeTexte.ajouterElementListe(make_shared<string>("Programmation Python"));
 	Liste<string> listeTexte2 = listeTexte;
-	cout << *listeTexte.getElements()[0] << endl;
-	cout << *listeTexte.getElements()[1] << endl;
-	cout << *listeTexte2.getElements()[0] << endl;
-	cout << *listeTexte2.getElements()[1] << endl;
+	cout << "Liste Texte 1" << endl;
+	cout << *listeTexte[0] << endl;
+	cout << *listeTexte[1] << endl;
+	cout << "Liste Texte 2" << endl;
+	cout << *listeTexte2[0] << endl;
+	cout << *listeTexte2[1] << endl;
 
 	//partie 3
-	*listeTexte.spanListe()[0] = "Polytechnique Montreal";
-	*listeTexte.spanListe()[1] = "Assembleur is hard";
-	cout << *listeTexte.getElements()[0] << endl;
-	cout << *listeTexte.getElements()[1] << endl;
-	cout << *listeTexte2.getElements()[0] << endl;
-	cout << *listeTexte2.getElements()[1] << endl;
+	listeTexte[0] = make_shared<string>("Polytechnique Montreal") ;
+	*listeTexte[1] = "Assembleur is hard";
+	cout << "Liste Texte 1" << endl;
+	cout << *listeTexte[0] << endl;
+	cout << *listeTexte[1] << endl;
+	cout << "Liste Texte 2" << endl;
+	cout << *listeTexte2[0] << endl;
+	cout << *listeTexte2[1] << endl;
 
 	cout << ligneDeSeparation;
 	

@@ -22,6 +22,7 @@ public:
 	shared_ptr<Acteur> trouverActeur(const std::string& nomActeur) const;
 	span<Film*> enSpan() const;
 	int size() const { return nElements; };
+	Film* operator[] (int index) const { return elements[index]; };
 	Film* trouverFilm(const function<bool(const Film*)>critere) {
 		for(Film* film: enSpan()) {
 			if(critere(film))
@@ -59,9 +60,10 @@ public:
 	Liste<T>(const Liste<T>& liste1) { 
 		capacite_ = liste1.capacite_; 
 		nElements_ = liste1.nElements_; 
+		elements_ = make_unique<shared_ptr<T>[]>(capacite_) ;
 		for (int i = 0; i < liste1.nElements_ ; i++) {
 			elements_[i]= liste1.elements_[i];
-			}
+		}
 	};
 
 	Liste<T>& operator= (Liste<T>&& copie) noexcept = default;
@@ -72,10 +74,11 @@ public:
 		return elements_.get();
 	};
 
+	shared_ptr<T>& operator[] (int index) const { return elements_[index]; }
+
 	span<shared_ptr<T>> spanListe() const
 	{ return span(elements_.get(), nElements_); }
-	span<shared_ptr<T>> spanListe() 
-	{ return span(elements_.get(), nElements_); }
+
 	void ajouterElementListe(shared_ptr<T> nom) { elements_[nElements_++] = move(nom); }
 	 // Pointeur vers un tableau de Acteur*, chaque Acteur* pointant vers un Acteur.
 	void setNElements(int nElements) {
@@ -96,19 +99,6 @@ struct Film
 	std::string titre, realisateur; // Titre et nom du réalisateur (on suppose qu'il n'y a qu'un réalisateur).
 	int anneeSortie, recette; // Année de sortie et recette globale du film en millions de dollars
 	ListeActeurs acteurs;
-
-	Film& operator=(const Film& autre)
-	{
-		if (this != &autre)
-		{
-			titre = autre.titre;
-			realisateur = autre.titre;
-			anneeSortie = autre.anneeSortie;
-			recette = autre.recette;
-			acteurs = ListeActeurs(autre.acteurs);
-		}
-		return *this;
-	}
 };
 
 struct Acteur
