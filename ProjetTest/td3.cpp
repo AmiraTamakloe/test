@@ -2,7 +2,7 @@
 #pragma region "Includes"//{
 #define _CRT_SECURE_NO_WARNINGS // On permet d'utiliser les fonctions de copies de chaînes qui sont considérées non sécuritaires.
 
-#include "structures_solutionnaire_2.hpp"      // Structures de données pour la collection de films en mémoire.
+#include "structures.hpp"      // Structures de données pour la collection de films en mémoire.
 
 #include "bibliotheque_cours.hpp"
 #include "verification_allocation.hpp" // Nos fonctions pour le rapport de fuites de mémoire.
@@ -432,9 +432,11 @@ int main()
 	cout << ligneDeSeparation << "Chapitre 9 : " << endl;
 
 	//partie 1 et 2
-	Liste<string> listeTexte;
-	listeTexte.ajouterElementListe(make_shared<string>("Programmation C++"));
-	listeTexte.ajouterElementListe(make_shared<string>("Programmation Python"));
+	Liste<string> listeTexte(2,2);
+	listeTexte[0] = make_shared<string>("Programmation C++");
+	listeTexte[1] = make_shared<string>("Programmation Python");
+	// listeTexte.ajouterElementListe(make_shared<string>("Programmation C++"));
+	// listeTexte.ajouterElementListe(make_shared<string>("Programmation Python"));
 	Liste<string> listeTexte2 = listeTexte;
 	cout << "Liste Texte 1" << endl;
 	cout << *listeTexte[0] << endl;

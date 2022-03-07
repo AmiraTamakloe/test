@@ -1,8 +1,8 @@
 [
 {
   "directory": "/Users/amiratamakloe/Desktop/ProjetTest/build",
-  "command": "/usr/bin/clang++  -isystem /Users/amiratamakloe/Desktop/ProjetTest/include  -std=c++2a -fsigned-char -Wall -Wextra -Wpedantic -Woverloaded-virtual -Wno-unknown-pragmas -Wno-enum-compare --coverage -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.1.sdk -mmacosx-version-min=11.6 -o CMakeFiles/ProjetTest.dir/td2_solutionnaire_2.cpp.o -c /Users/amiratamakloe/Desktop/ProjetTest/td2_solutionnaire_2.cpp",
-  "file": "/Users/amiratamakloe/Desktop/ProjetTest/td2_solutionnaire_2.cpp"
+  "command": "/usr/bin/clang++  -isystem /Users/amiratamakloe/Desktop/ProjetTest/include  -std=c++2a -fsigned-char -Wall -Wextra -Wpedantic -Woverloaded-virtual -Wno-unknown-pragmas -Wno-enum-compare --coverage -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.1.sdk -mmacosx-version-min=11.6 -o CMakeFiles/ProjetTest.dir/td3.cpp.o -c /Users/amiratamakloe/Desktop/ProjetTest/td3.cpp",
+  "file": "/Users/amiratamakloe/Desktop/ProjetTest/td3.cpp"
 },
 {
   "directory": "/Users/amiratamakloe/Desktop/ProjetTest/build",

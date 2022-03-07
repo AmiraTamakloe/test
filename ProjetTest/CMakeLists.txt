@@ -10,10 +10,10 @@ project(ProjetTest)
 
 # On met les fichiers sources (incluant les entêtes)
 set(ALL_FILES
-    "td2_solutionnaire_2.cpp"
+    "td3.cpp"
     "bibliotheque_cours/bibliotheque_cours.cpp"
     "bibliotheque_cours/verification_allocation.cpp"
-	"structures_solutionnaire_2.hpp"
+	"structures.hpp"
 )
 
 add_executable(${PROJECT_NAME} ${ALL_FILES})
